@@ -178,12 +178,12 @@ const SignUpPage = () => {
                     </FormControl>
                     <label
                       htmlFor="terms"
-                      className="text-sm text-muted-foreground opacity-75"
+                      className={`text-sm text-muted-foreground opacity-75 ${
+                        methods.formState.errors.terms ? "text-red-500" : ""
+                      }`}
                     >
-                      <span>
-                        {" "}
-                        Ao clicar em &quot;Criar conta&quot;, você aceita
-                      </span>
+                      {" "}
+                      Ao clicar em &quot;Criar conta&quot;, você aceita
                       <a href="#" className="text-white underline">
                         {" "}
                         nosso termo de uso e política de privacidade
