@@ -184,7 +184,14 @@ const SignUpPage = () => {
                     >
                       {" "}
                       Ao clicar em &quot;Criar conta&quot;, você aceita
-                      <a href="#" className="text-white underline">
+                      <a
+                        href="#"
+                        className={`underline transition-colors ${
+                          methods.formState.errors.terms
+                            ? "text-red-500"
+                            : "text-white"
+                        }`}
+                      >
                         {" "}
                         nosso termo de uso e política de privacidade
                       </a>
