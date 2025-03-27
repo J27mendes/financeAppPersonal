@@ -97,7 +97,7 @@ const LoginPage = () => {
       </Form>
       <div className="flex items-center justify-center">
         <p className="text-center opacity-50">Ainda não possui uma conta?</p>
-        <Button variant="link" className="text-white" asChild>
+        <Button variant="link" asChild>
           <Link to="/signup">Criar conta</Link>
         </Button>
       </div>
