@@ -63,7 +63,7 @@ const SignUpPage = () => {
   const signupMutation = useMutation({
     mutationKey: ["signup"],
     mutationFn: async (variables) => {
-      const response = await api.post("/users/", {
+      const response = await api.post("/users", {
         first_name: variables.firstName,
         last_name: variables.lastName,
         email: variables.email,

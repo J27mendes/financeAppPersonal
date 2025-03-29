@@ -1,6 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import PasswordInput from "@/components/passwordInput"
@@ -22,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { api } from "@/lib/axios"
 
 const loginSchema = z.object({
   emailLogin: z
@@ -37,6 +41,17 @@ const loginSchema = z.object({
 })
 
 const LoginPage = () => {
+  const [loginUser, setLoginUser] = useState(null)
+  const loginMutation = useMutation({
+    mutationKey: ["login"],
+    mutationFn: async (variables) => {
+      const response = await api.post("/users/auth", {
+        email: variables.emailLogin,
+        password: variables.passwordLogin,
+      })
+      return response.data
+    },
+  })
   const loginMethods = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -44,8 +59,49 @@ const LoginPage = () => {
       passwordLogin: "",
     },
   })
+
+  useEffect(() => {
+    const loginInit = async () => {
+      try {
+        const accessToken = localStorage.getItem("accessToken")
+        const refreshToken = localStorage.getItem("refreshToken")
+
+        if (!accessToken && !refreshToken) return
+        const response = await api.get("/users/me", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        setLoginUser(response.data)
+      } catch (error) {
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("refreshToken")
+        console.error(error)
+      }
+    }
+    loginInit()
+  }, [])
   const handleFormLoginSubmit = (data) => {
-    console.log(data)
+    loginMutation.mutate(data, {
+      onSuccess: (logedUser) => {
+        const accessToken = logedUser.tokens.accessToken
+        const refreshToken = logedUser.tokens.refreshToken
+        setLoginUser(logedUser)
+        localStorage.setItem("accessToken", accessToken)
+        localStorage.setItem("refreshToken", refreshToken)
+        toast.success("Conta logada com sucesso!")
+      },
+      onError: () => {
+        toast.error(
+          "Erro ao logar na conta, por favor tente novamente mais tarte!"
+        )
+      },
+    })
+  }
+  if (loginUser) {
+    return (
+      <h1 className="text-4xl text-primary-green">{`Olá, ${loginUser.first_name}`}</h1>
+    )
   }
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
