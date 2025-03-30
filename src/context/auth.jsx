@@ -12,6 +12,19 @@ export const AuthContext = createContext({
 
 export const useAuthContext = () => useContext(AuthContext)
 
+const STORAGE_TOKEN_ACCESS = "accessToken"
+const STORAGE_TOKEN_REFRESH = "refreshToken"
+
+const setTokens = (tokens) => {
+  localStorage.setItem(STORAGE_TOKEN_ACCESS, tokens.accessToken)
+  localStorage.setItem(STORAGE_TOKEN_REFRESH, tokens.refreshToken)
+}
+
+const removeTokens = () => {
+  localStorage.removeItem(STORAGE_TOKEN_ACCESS)
+  localStorage.removeItem(STORAGE_TOKEN_REFRESH)
+}
+
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const signupMutation = useMutation({
@@ -41,8 +54,8 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken")
-        const refreshToken = localStorage.getItem("refreshToken")
+        const accessToken = localStorage.getItem(STORAGE_TOKEN_ACCESS)
+        const refreshToken = localStorage.getItem(STORAGE_TOKEN_REFRESH)
 
         if (!accessToken && !refreshToken) return
         const response = await api.get("/users/me", {
@@ -52,8 +65,7 @@ export const AuthContextProvider = ({ children }) => {
         })
         setUser(response.data)
       } catch (error) {
-        localStorage.removeItem("accessToken")
-        localStorage.removeItem("refreshToken")
+        removeTokens()
         console.error(error)
       }
     }
@@ -63,11 +75,8 @@ export const AuthContextProvider = ({ children }) => {
   const signup = (data) => {
     signupMutation.mutate(data, {
       onSuccess: (createdUser) => {
-        const accessToken = createdUser.tokens.accessToken
-        const refreshToken = createdUser.tokens.refreshToken
         setUser(createdUser)
-        localStorage.setItem("accessToken", accessToken)
-        localStorage.setItem("refreshToken", refreshToken)
+        setTokens(createdUser.tokens)
         toast.success("Conta criada com sucesso!")
       },
       onError: () => {
@@ -81,11 +90,8 @@ export const AuthContextProvider = ({ children }) => {
   const login = (data) => {
     loginMutation.mutate(data, {
       onSuccess: (logedUser) => {
-        const accessToken = logedUser.tokens.accessToken
-        const refreshToken = logedUser.tokens.refreshToken
         setUser(logedUser)
-        localStorage.setItem("accessToken", accessToken)
-        localStorage.setItem("refreshToken", refreshToken)
+        setTokens(logedUser.tokens)
         toast.success("Conta logada com sucesso!")
       },
       onError: () => {
