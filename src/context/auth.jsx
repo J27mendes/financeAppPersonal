@@ -2,6 +2,10 @@ import { useMutation } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import { toast } from "sonner"
 
+import {
+  STORAGE_TOKEN_ACCESS,
+  STORAGE_TOKEN_REFRESH,
+} from "@/constants/local-storage"
 import { api } from "@/lib/axios"
 
 export const AuthContext = createContext({
@@ -9,12 +13,10 @@ export const AuthContext = createContext({
   initializing: true,
   login: () => {},
   signup: () => {},
+  signOut: () => {},
 })
 
 export const useAuthContext = () => useContext(AuthContext)
-
-const STORAGE_TOKEN_ACCESS = "accessToken"
-const STORAGE_TOKEN_REFRESH = "refreshToken"
 
 const setTokens = (tokens) => {
   localStorage.setItem(STORAGE_TOKEN_ACCESS, tokens.accessToken)
@@ -61,11 +63,7 @@ export const AuthContextProvider = ({ children }) => {
         const refreshToken = localStorage.getItem(STORAGE_TOKEN_REFRESH)
 
         if (!accessToken && !refreshToken) return
-        const response = await api.get("/users/me", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        const response = await api.get("/users/me")
         setUser(response.data)
       } catch (error) {
         setUser(null)
@@ -107,8 +105,15 @@ export const AuthContextProvider = ({ children }) => {
       },
     })
   }
+
+  const signOut = () => {
+    setUser(null)
+    removeTokens()
+  }
   return (
-    <AuthContext.Provider value={{ user, initializing, login, signup }}>
+    <AuthContext.Provider
+      value={{ user, initializing, login, signup, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   )
