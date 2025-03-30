@@ -1,9 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
+import { useContext } from "react"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router"
-import { toast } from "sonner"
 import { z } from "zod"
 
 import PasswordInput from "@/components/passwordInput"
@@ -26,7 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { api } from "@/lib/axios"
+import { AuthContext } from "@/context/auth"
 
 const signupSchema = z
   .object({
@@ -59,19 +57,8 @@ const signupSchema = z
   })
 
 const SignUpPage = () => {
-  const [user, setUser] = useState(null)
-  const signupMutation = useMutation({
-    mutationKey: ["signup"],
-    mutationFn: async (variables) => {
-      const response = await api.post("/users", {
-        first_name: variables.firstName,
-        last_name: variables.lastName,
-        email: variables.email,
-        password: variables.password,
-      })
-      return response.data
-    },
-  })
+  const { user, signup } = useContext(AuthContext)
+
   const methods = useForm({
     resolver: zodResolver(signupSchema),
     defaultvalues: {
@@ -84,45 +71,8 @@ const SignUpPage = () => {
     },
   })
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const accessToken = localStorage.getItem("accessToken")
-        const refreshToken = localStorage.getItem("refreshToken")
+  const handleFormSubmit = (data) => signup(data)
 
-        if (!accessToken && !refreshToken) return
-        const response = await api.get("/users/me", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        setUser(response.data)
-      } catch (error) {
-        localStorage.removeItem("accessToken")
-        localStorage.removeItem("refreshToken")
-        console.error(error)
-      }
-    }
-    init()
-  }, [])
-
-  const handleFormSubmit = (data) => {
-    signupMutation.mutate(data, {
-      onSuccess: (createdUser) => {
-        const accessToken = createdUser.tokens.accessToken
-        const refreshToken = createdUser.tokens.refreshToken
-        setUser(createdUser)
-        localStorage.setItem("accessToken", accessToken)
-        localStorage.setItem("refreshToken", refreshToken)
-        toast.success("Conta criada com sucesso!")
-      },
-      onError: () => {
-        toast.error(
-          "Erro ao criar a conta, por favor tente novamente mais tarte!"
-        )
-      },
-    })
-  }
   if (user) {
     return (
       <h1 className="text-4xl text-primary-green">{`Olá, ${user.first_name}`}</h1>
