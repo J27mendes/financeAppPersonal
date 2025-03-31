@@ -42,6 +42,8 @@ protectedApi.interceptors.response.use(
         localStorage.setItem(STORAGE_TOKEN_REFRESH, newRefreshTken)
         return protectedApi(request)
       } catch (refreshError) {
+        localStorage.removeItem(STORAGE_TOKEN_ACCESS)
+        localStorage.removeItem(STORAGE_TOKEN_REFRESH)
         console.error(refreshError)
       }
     }
