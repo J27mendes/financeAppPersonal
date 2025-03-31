@@ -1,10 +1,15 @@
 import axios from "axios"
 
-import { STORAGE_TOKEN_ACCESS } from "@/constants/local-storage"
+import {
+  STORAGE_TOKEN_ACCESS,
+  STORAGE_TOKEN_REFRESH,
+} from "@/constants/local-storage"
 
-export const api = axios.create({ baseURL: "http://localhost:80/api" })
+export const publicApi = axios.create({ baseURL: "http://localhost:80/api" })
 
-api.interceptors.request.use((request) => {
+export const protectedApi = axios.create({ baseURL: "http://localhost:80/api" })
+
+protectedApi.interceptors.request.use((request) => {
   const accessToken = localStorage.getItem(STORAGE_TOKEN_ACCESS)
   if (!accessToken) {
     return request
@@ -12,3 +17,34 @@ api.interceptors.request.use((request) => {
   request.headers.Authorization = `Bearer ${accessToken}`
   return request
 })
+
+protectedApi.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const request = error.config
+    const refreshToken = localStorage.getItem(STORAGE_TOKEN_REFRESH)
+    if (!refreshToken) {
+      return Promise.reject(error)
+    }
+    if (
+      error.response.status === 401 &&
+      !request._retry &&
+      !request.url.includes("/users/authtoken")
+    ) {
+      request._retry = true
+      try {
+        const response = await protectedApi.post("/users//authtoken", {
+          refreshToken,
+        })
+        const newAccessToken = response.data.accessToken
+        const newRefreshTken = response.data.refreshToken
+        localStorage.setItem(STORAGE_TOKEN_ACCESS, newAccessToken)
+        localStorage.setItem(STORAGE_TOKEN_REFRESH, newRefreshTken)
+        return protectedApi(request)
+      } catch (refreshError) {
+        console.error(refreshError)
+      }
+    }
+    return Promise.reject(error)
+  }
+)
