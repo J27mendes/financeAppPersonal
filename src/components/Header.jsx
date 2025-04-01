@@ -1,5 +1,6 @@
 import { ChevronDownIcon, LogOutIcon } from "lucide-react"
 
+import Logo from "@/assets/images/logo.svg"
 import { useAuthContext } from "@/context/auth"
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
@@ -20,7 +21,7 @@ const Header = () => {
     <Card>
       <CardContent className="flex items-center justify-between px-8 py-4">
         <div>
-          <img src={"#"} alt="Fintrack" />
+          <img src={Logo} alt="Fintrack" />
         </div>
         <div>
           <DropdownMenu>
