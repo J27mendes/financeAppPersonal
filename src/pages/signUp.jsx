@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { Link, Navigate } from "react-router"
 import { z } from "zod"
 
-import PasswordInput from "@/components/passwordInput"
+import PasswordInput from "@/components/PasswordInput"
 import { Button } from "@/components/ui/button"
 import {
   Card,
