@@ -33,7 +33,7 @@ protectedApi.interceptors.response.use(
     ) {
       request._retry = true
       try {
-        const response = await protectedApi.post("/users//authtoken", {
+        const response = await protectedApi.post("/users/authtoken", {
           refreshToken,
         })
         const newAccessToken = response.data.accessToken
@@ -44,7 +44,7 @@ protectedApi.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem(STORAGE_TOKEN_ACCESS)
         localStorage.removeItem(STORAGE_TOKEN_REFRESH)
-        console.error(refreshError)
+        return Promise.reject(refreshError)
       }
     }
     return Promise.reject(error)
