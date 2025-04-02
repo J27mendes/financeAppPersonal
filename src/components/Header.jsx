@@ -17,6 +17,7 @@ import {
 
 const Header = () => {
   const { user, signOut } = useAuthContext()
+
   return (
     <Card>
       <CardContent className="flex items-center justify-between px-8 py-4">
@@ -25,8 +26,11 @@ const Header = () => {
         </div>
         <div>
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant="outline" className="space-x-1">
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="space-x-1 focus-visible:outline-none focus-visible:ring-0"
+              >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="#" />
                   <AvatarFallback>
@@ -39,21 +43,18 @@ const Header = () => {
                 </p>
                 <ChevronDownIcon />
               </Button>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Meu Perfil</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    className="w-full justify-items-start"
-                    onClick={signOut}
-                  >
-                    <LogOutIcon /> Sair
-                  </Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
             </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Meu Perfil</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={signOut}
+                className="flex cursor-pointer items-center space-x-2"
+              >
+                <LogOutIcon />
+                <span>Sair</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </CardContent>
