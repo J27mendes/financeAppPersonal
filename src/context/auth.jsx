@@ -56,7 +56,7 @@ export const AuthContextProvider = ({ children }) => {
 
         if (!accessToken && !refreshToken) return
         const response = await UserService.me()
-        setUser(response.data)
+        setUser(response)
       } catch (error) {
         setUser(null)
         console.error(error)
