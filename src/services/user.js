@@ -43,4 +43,19 @@ export const UserService = {
     const response = await protectedApi.get("/users/me")
     return response.data
   },
+  /**
+   * retorna o balanço do usuário autenticado
+   * @param {Object} input
+   * @param {string} input.from - data inicial (yyyy-MM-dd)
+   * @param {string} input.to - data final (yyy-MM-dd)
+   */
+  getbalance: async (input) => {
+    const queryParams = new URLSearchParams()
+    queryParams.set("from", input.from)
+    queryParams.set("to", input.to)
+    const response = await protectedApi.get(
+      `/users/me/balance?${queryParams.toString()}`
+    )
+    return response.data
+  },
 }

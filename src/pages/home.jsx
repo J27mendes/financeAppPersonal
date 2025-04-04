@@ -1,6 +1,7 @@
 import { PlusIcon } from "lucide-react"
 import { Navigate } from "react-router"
 
+import Balance from "@/components/Balance"
 import DateSelection from "@/components/DateSelection"
 import Header from "@/components/header"
 import { Button } from "@/components/ui/button"
@@ -29,6 +30,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+      <Balance />
     </>
   )
 }
