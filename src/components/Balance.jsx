@@ -10,7 +10,7 @@ import { useSearchParams } from "react-router"
 import { useAuthContext } from "@/context/auth"
 import { UserService } from "@/services/user"
 
-import BalanceItem from "./Balance-Item"
+import BalanceItem from "./BalanceItem"
 
 const Balance = () => {
   const [searchParams] = useSearchParams()
