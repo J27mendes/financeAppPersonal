@@ -2,11 +2,11 @@ import { useMutation } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import { toast } from "sonner"
 
+import { UserService } from "@/api/services/user"
 import {
   STORAGE_TOKEN_ACCESS,
   STORAGE_TOKEN_REFRESH,
 } from "@/constants/local-storage"
-import { UserService } from "@/services/user"
 
 export const AuthContext = createContext({
   user: null,
