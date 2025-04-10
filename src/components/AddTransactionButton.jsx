@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  Loader2Icon,
   PiggyBankIcon,
   PlusIcon,
   TrendingDownIcon,
@@ -206,7 +205,7 @@ const AddTransactionButton = () => {
                     type="reset"
                     variant="secondary"
                     className="w-full"
-                    disable={form.formState.isSubmitting}
+                    disabled={form.formState.isSubmitting}
                   >
                     Cancelar
                   </Button>
@@ -214,11 +213,8 @@ const AddTransactionButton = () => {
                 <Button
                   type="submit"
                   className="w-full"
-                  disable={form.formState.isSubmitting}
+                  disabled={form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting && (
-                    <Loader2Icon className="animate-spin" />
-                  )}
                   Adicionar
                 </Button>
               </DialogFooter>
