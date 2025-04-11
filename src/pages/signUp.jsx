@@ -1,7 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import { Link, Navigate } from "react-router"
-import { z } from "zod"
 
 import PasswordInput from "@/components/PasswordInput"
 import { Button } from "@/components/ui/button"
@@ -24,51 +21,12 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useAuthContext } from "@/context/auth"
-
-const signupSchema = z
-  .object({
-    firstName: z.string().trim().min(1, {
-      message: "O nome é obrigatório",
-    }),
-    lastName: z.string().trim().min(1, {
-      message: "O sobrenome é obrigatório",
-    }),
-    email: z
-      .string()
-      .email({
-        message: "O email é inválido",
-      })
-      .trim()
-      .nonempty({ message: "O email é obrigatório" }),
-    password: z.string().trim().min(6, {
-      message: "A senha deve ter no mínimo 6 caracteres",
-    }),
-    passwordConfirmation: z.string().trim().min(6, {
-      message: "A confirmação de senha é obrigatória",
-    }),
-    terms: z.boolean().refine((value) => value === true, {
-      message: "Você precisa aceitar os termos",
-    }),
-  })
-  .refine((data) => data.password === data.passwordConfirmation, {
-    message: "As senhas não coincidem",
-    path: ["passwordConfirmation"],
-  })
+import { useSignupForm } from "@/forms/hooks/user"
 
 const SignUpPage = () => {
   const { user, signup, initializing } = useAuthContext()
 
-  const methods = useForm({
-    resolver: zodResolver(signupSchema),
-    defaultvalues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      passwordConfirmation: "",
-      terms: false,
-    },
-  })
+  const { signupMethods } = useSignupForm()
 
   const handleFormSubmit = (data) => signup(data)
 
@@ -79,8 +37,8 @@ const SignUpPage = () => {
   }
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
-      <Form {...methods}>
-        <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
+      <Form {...signupMethods}>
+        <form onSubmit={signupMethods.handleSubmit(handleFormSubmit)}>
           <Card className="w-[500px]">
             <CardHeader>
               <CardTitle>Crie a sua conta</CardTitle>
@@ -88,7 +46,7 @@ const SignUpPage = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
-                control={methods.control}
+                control={signupMethods.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
@@ -106,7 +64,7 @@ const SignUpPage = () => {
                 )}
               />
               <FormField
-                control={methods.control}
+                control={signupMethods.control}
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
@@ -124,7 +82,7 @@ const SignUpPage = () => {
                 )}
               />
               <FormField
-                control={methods.control}
+                control={signupMethods.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -142,7 +100,7 @@ const SignUpPage = () => {
                 )}
               />
               <FormField
-                control={methods.control}
+                control={signupMethods.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
@@ -155,7 +113,7 @@ const SignUpPage = () => {
                 )}
               />
               <FormField
-                control={methods.control}
+                control={signupMethods.control}
                 name="passwordConfirmation"
                 render={({ field }) => (
                   <FormItem>
@@ -172,7 +130,7 @@ const SignUpPage = () => {
                 )}
               />
               <FormField
-                control={methods.control}
+                control={signupMethods.control}
                 name="terms"
                 render={({ field }) => (
                   <FormItem className="items-top flex space-x-2 space-y-0">
@@ -187,7 +145,9 @@ const SignUpPage = () => {
                     <label
                       htmlFor="terms"
                       className={`text-sm text-muted-foreground opacity-75 ${
-                        methods.formState.errors.terms ? "text-red-500" : ""
+                        signupMethods.formState.errors.terms
+                          ? "text-red-500"
+                          : ""
                       }`}
                     >
                       {" "}
@@ -195,7 +155,7 @@ const SignUpPage = () => {
                       <a
                         href="#"
                         className={`underline transition-colors ${
-                          methods.formState.errors.terms
+                          signupMethods.formState.errors.terms
                             ? "text-red-500"
                             : "text-white"
                         }`}
