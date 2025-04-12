@@ -54,34 +54,32 @@ export const AuthContextProvider = ({ children }) => {
     init()
   }, [])
 
-  const signup = (data) => {
-    signupMutation.mutate(data, {
-      onSuccess: (createdUser) => {
-        setUser(createdUser)
-        setTokens(createdUser.tokens)
-        toast.success("Conta criada com sucesso!")
-      },
-      onError: () => {
-        toast.error(
-          "Erro ao criar a conta, por favor tente novamente mais tarte!"
-        )
-      },
-    })
+  const signup = async (data) => {
+    try {
+      const createdUser = await signupMutation.mutateAsync(data)
+      setUser(createdUser)
+      setTokens(createdUser.tokens)
+      toast.success("Conta criada com sucesso!")
+    } catch (error) {
+      console.error(error)
+      toast.error(
+        "Erro ao criar a conta, por favor tente novamente mais tarte!"
+      )
+    }
   }
 
-  const login = (data) => {
-    loginMutation.mutate(data, {
-      onSuccess: (logedUser) => {
-        setUser(logedUser)
-        setTokens(logedUser.tokens)
-        toast.success("Conta logada com sucesso!")
-      },
-      onError: () => {
-        toast.error(
-          "Erro ao logar na conta, por favor tente novamente mais tarte!"
-        )
-      },
-    })
+  const login = async (data) => {
+    try {
+      const logedUser = await loginMutation.mutateAsync(data)
+      setUser(logedUser)
+      setTokens(logedUser.tokens)
+      toast.success("Conta logada com sucesso!")
+    } catch (error) {
+      console.error(error)
+      toast.error(
+        "Erro ao logar na conta, por favor tente novamente mais tarte!"
+      )
+    }
   }
 
   const signOut = () => {
